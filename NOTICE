@@ -1,0 +1,25 @@
+pumpkin-holograms
+=================
+
+This port reimplements the text-hologram subset of FancyHolograms for
+Pumpkin's WebAssembly plugin API.
+
+Original work
+-------------
+
+    FancyHolograms
+    Copyright (c) 2022-2023 Oliver
+    https://github.com/FancyMcPlugins/FancyHolograms
+    Archived; merged into https://github.com/FancyInnovations/fancyplugins
+
+    Licensed under the MIT License. See LICENSE.
+
+The MIT licence and the original copyright notice are retained in `LICENSE`.
+See `DESIGN.md` for compatibility details.
+
+Differences from the original
+-----------------------------
+
+Holograms are real, world-authoritative Pumpkin entities rather than
+client-side packets sent per player, so per-player visibility is not
+reproduced. See `DESIGN.md` for lifecycle and storage details.

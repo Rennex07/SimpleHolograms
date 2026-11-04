@@ -1,0 +1,12 @@
+/target/
+*.wasm
+*.key
+*.der
+*.pem
+.env
+.env.*
+/logs/
+/data/
+/.pumpkin/
+/AGENTS.md
+/CLAUDE.md

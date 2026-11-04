@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to release
+        required: true
+        type: string
+      publish_market:
+        description: Also upload this version to the Pumpkin Market
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holograms-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip2
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Validate release inputs
+        id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          PUBLISH_MARKET: ${{ inputs.publish_market }}
+          MARKET_PLUGIN_ID: ${{ vars.MARKET_PLUGIN_ID }}
+          MARKET_API_TOKEN: ${{ secrets.MARKET_API_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import tomllib
+          with open("Cargo.toml", "rb") as source:
+              version = tomllib.load(source)["package"]["version"]
+          if os.environ["RELEASE_TAG"] != f"v{version}":
+              raise SystemExit("Release tag must match the package version")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"value={version}\n")
+          if os.environ["PUBLISH_MARKET"] == "true":
+              if not os.environ["MARKET_PLUGIN_ID"] or not os.environ["MARKET_API_TOKEN"]:
+                  raise SystemExit("Market publication requires a listing ID and API token")
+          PY
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
+      - run: cargo fetch --locked
+      - run: python3 tools/check_wit.py
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --offline --all-targets -- -D warnings
+      - run: cargo test --locked --offline
+      - run: cargo build --locked --offline --release --target wasm32-wasip2
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          files: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          fail_on_unmatched_files: true
+          body: Initial release.
+      - name: Publish to Pumpkin Market
+        if: inputs.publish_market
+        uses: filiphsps/pumpkin-plugins/actions/publish-to-pumpkin-market@publish-to-pumpkin-market-v0.0.4
+        with:
+          plugin-id: ${{ vars.MARKET_PLUGIN_ID }}
+          version: ${{ steps.version.outputs.value }}
+          wasm-file: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          api-token: ${{ secrets.MARKET_API_TOKEN }}
+          track: stable
+          release-notes: Initial release.

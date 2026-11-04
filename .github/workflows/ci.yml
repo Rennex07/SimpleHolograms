@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip2
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fetch --locked
+      - run: python3 tools/check_wit.py
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --offline --all-targets -- -D warnings
+      - run: cargo test --locked --offline
+      - run: cargo build --locked --offline --release --target wasm32-wasip2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pumpkin_holograms
+          path: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          if-no-files-found: error

@@ -1,0 +1,16 @@
+[package]
+name = "pumpkin-holograms"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+description = "Persistent text holograms for Pumpkin"
+license = "MIT"
+repository = "https://github.com/Rennex07/SimpleHolograms"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+pumpkin-plugin-api = "=0.2.1"
+pumpkin-pie = { git = "https://github.com/Rennex07/PumpkinPIE", tag = "v0.2.5" }
+tracing = "0.1"
