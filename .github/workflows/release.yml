@@ -48,7 +48,13 @@ jobs:
           import tomllib
           with open("Cargo.toml", "rb") as source:
               version = tomllib.load(source)["package"]["version"]
-          if os.environ["RELEASE_TAG"] != f"v{version}":
+          tag = os.environ["RELEASE_TAG"]
+          if not tag.startswith("v"):
+              raise SystemExit("Release tag must start with v")
+          tag_parts = [int(part) for part in tag[1:].split(".")]
+          package_parts = [int(part) for part in version.split(".")]
+          tag_parts += [0] * (len(package_parts) - len(tag_parts))
+          if tag_parts != package_parts:
               raise SystemExit("Release tag must match the package version")
           with open(os.environ["GITHUB_OUTPUT"], "a") as output:
               output.write(f"value={version}\n")
