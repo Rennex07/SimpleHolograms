@@ -72,10 +72,7 @@ impl Plugin for HologramPlugin {
         PluginMetadata {
             name: PLUGIN_NAME.to_string(),
             version: env!("CARGO_PKG_VERSION").to_string(),
-            authors: vec![
-                "Oliver (original FancyHolograms)".to_string(),
-                "Pumpkin port".to_string(),
-            ],
+            authors: vec!["Rennex07".to_string()],
             description: "Text holograms using display entities, ported from FancyHolograms"
                 .to_string(),
             dependencies: vec![],
