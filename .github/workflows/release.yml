@@ -22,7 +22,10 @@ concurrency:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,7 +43,7 @@ jobs:
           MARKET_PLUGIN_ID: ${{ vars.MARKET_PLUGIN_ID }}
           MARKET_API_TOKEN: ${{ secrets.MARKET_API_TOKEN }}
         run: |
-          python3 - <<'PY'
+          python - <<'PY'
           import os
           import tomllib
           with open("Cargo.toml", "rb") as source:
@@ -55,7 +58,7 @@ jobs:
           PY
           test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
       - run: cargo fetch --locked
-      - run: python3 tools/check_wit.py
+      - run: python tools/check_wit.py
       - run: cargo fmt --check
       - run: cargo clippy --locked --offline --all-targets -- -D warnings
       - run: cargo test --locked --offline

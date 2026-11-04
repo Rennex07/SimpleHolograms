@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -18,7 +18,7 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - run: cargo fetch --locked
-      - run: python3 tools/check_wit.py
+      - run: python tools/check_wit.py
       - run: cargo fmt --check
       - run: cargo clippy --locked --offline --all-targets -- -D warnings
       - run: cargo test --locked --offline
