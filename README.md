@@ -9,11 +9,13 @@ Built for Pumpkin **0.2.1+26.3-26.51**. Put `pumpkin_holograms.wasm` in the serv
 The plugin requires `fs.read.data` and `fs.write.data` permissions for its configuration and saved holograms. On a headless server, approve them in `pumpkin.toml`:
 
 ```toml
-[plugins.overrides.pumpkinhologram]
+[plugins.overrides.SimpleHolograms]
 allowed_permissions = ["fs.read.data", "fs.write.data"]
 ```
 
 PumpkinPIE is optional at runtime and provides server-wide placeholders when installed.
+
+When upgrading from `pumpkinhologram`, stop the server and copy its data from `plugins/data/pumpkinhologram` to `plugins/data/SimpleHolograms`. Update permission grants from `pumpkinhologram:` to `SimpleHolograms:` and update any plugin permission override to the name above.
 
 ## Usage
 

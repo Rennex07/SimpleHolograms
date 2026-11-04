@@ -25,7 +25,7 @@ use yaml::fmt_coord;
 
 static PLACEHOLDER_TASK: std::sync::Mutex<Option<u32>> = std::sync::Mutex::new(None);
 
-const PLUGIN_NAME: &str = "pumpkinhologram";
+const PLUGIN_NAME: &str = "SimpleHolograms";
 
 const HOLOGRAM_COMMANDS: &[(&str, &str, &str)] = &[
     ("create", "hologram.create", "Create a hologram"),
@@ -100,7 +100,7 @@ impl Plugin for HologramPlugin {
             bridge::refresh_placeholders()
         });
         *PLACEHOLDER_TASK.lock().unwrap_or_else(|e| e.into_inner()) = Some(task);
-        tracing::info!("PumpkinHologram enabled");
+        tracing::info!("SimpleHolograms enabled");
         Ok(())
     }
 
@@ -116,20 +116,20 @@ impl Plugin for HologramPlugin {
             bridge::save_to_disk();
         }
         bridge::remove_all_entities();
-        tracing::info!("FancyHolograms disabled");
+        tracing::info!("SimpleHolograms disabled");
         Ok(())
     }
 }
 
 fn register_permissions(context: &Context) {
     let mut nodes: Vec<Permission> = vec![Permission {
-        node: "pumpkinhologram:admin".to_string(),
-        description: "Administrative access to the PumpkinHologram commands".to_string(),
+        node: format!("{PLUGIN_NAME}:admin"),
+        description: "Administrative access to the SimpleHolograms commands".to_string(),
         default: PermissionDefault::Op(PermissionLevel::Three),
         children: vec![],
     }];
     nodes.push(Permission {
-        node: "pumpkinhologram:command".to_string(),
+        node: format!("{PLUGIN_NAME}:command"),
         description: "Access the hologram command root; subcommands have separate permissions"
             .to_string(),
         default: PermissionDefault::Allow,
@@ -145,7 +145,7 @@ fn register_permissions(context: &Context) {
             continue;
         }
         nodes.push(Permission {
-            node: format!("pumpkinhologram:{suffix}"),
+            node: format!("{PLUGIN_NAME}:{suffix}"),
             description: description.to_string(),
             default: PermissionDefault::Op(PermissionLevel::Three),
             children: vec![],
@@ -161,12 +161,18 @@ fn register_permissions(context: &Context) {
 }
 
 fn permitted(sender: &CommandSender, server: &Server, suffix: &str) -> bool {
-    if suffix == "admin" {
-        return sender.has_permission(server, "pumpkinhologram:admin")
-            || sender.has_permission(server, "fancyholograms.admin");
+    sender.has_permission(server, &format!("{PLUGIN_NAME}:{suffix}"))
+}
+
+#[cfg(test)]
+mod metadata_tests {
+    use super::*;
+
+    #[test]
+    fn plugin_name_matches_the_permission_namespace() {
+        assert_eq!(HologramPlugin.metadata().name, "SimpleHolograms");
+        assert_eq!(format!("{PLUGIN_NAME}:command"), "SimpleHolograms:command");
     }
-    sender.has_permission(server, &format!("pumpkinhologram:{suffix}"))
-        || sender.has_permission(server, &format!("fancyholograms.{suffix}"))
 }
 
 fn hologram_command() -> Command {
@@ -183,7 +189,7 @@ fn hologram_command() -> Command {
             "holo".to_string(),
             "fholo".to_string(),
         ],
-        "Main command for the PumpkinHologram plugin",
+        "Main command for the SimpleHolograms plugin",
     )
     // Without an executable root the whole tree renders as `Unknown command`
     // for everyone, operators included.
@@ -366,7 +372,7 @@ impl pumpkin_plugin_api::commands::CommandHandler for Handler {
 }
 
 const HELP_TEXT: &[&str] = &[
-    "PumpkinHologram commands help:",
+    "SimpleHolograms commands help:",
     "- /hologram help - Shows all (sub)commands",
     "- /hologram list [page] - Shows an overview of all holograms",
     "- /hologram create <name> <text ...> - Creates a new hologram",
