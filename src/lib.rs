@@ -322,6 +322,14 @@ impl pumpkin_plugin_api::commands::CommandHandler for Handler {
         server: Server,
         args: ConsumedArgs,
     ) -> pumpkin_plugin_api::Result<i32, CommandError> {
+        // The command root has its own node, registered as `Allow` so the default is a
+        // usable `/hologram help`. Checking it here means an administrator who denies it
+        // turns the whole tree off in one place, instead of the node being registered and
+        // never consulted.
+        if !permitted(&sender, &server, "command") {
+            error(&sender, "You don't have the required permission to do that");
+            return Ok(0);
+        }
         if let Some(suffix) = self.permission()
             && !permitted(&sender, &server, suffix)
         {
