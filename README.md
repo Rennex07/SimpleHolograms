@@ -41,6 +41,4 @@ cargo test --locked --offline
 cargo build --locked --offline --release --target wasm32-wasip2
 ```
 
-Install `target/wasm32-wasip2/release/pumpkin_holograms.wasm` in the server's plugin directory. The host-free tests do not replace testing entity visibility, persistence and tab completion in-game.
-
 The compatibility check verifies the resolved API's WIT against Pumpkin commit `224f9f8144ca53a8d0800acb87607d714196e2a6`, WIT tree `5aeec84177a489e920a22532e5aff2b5f9279c1b`. Matching a version string alone does not guarantee plugin compatibility.
