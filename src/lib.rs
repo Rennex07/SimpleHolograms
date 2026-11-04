@@ -71,7 +71,7 @@ impl Plugin for HologramPlugin {
     fn metadata(&self) -> PluginMetadata {
         PluginMetadata {
             name: PLUGIN_NAME.to_string(),
-            version: "0.1.0".to_string(),
+            version: env!("CARGO_PKG_VERSION").to_string(),
             authors: vec![
                 "Oliver (original FancyHolograms)".to_string(),
                 "Pumpkin port".to_string(),
