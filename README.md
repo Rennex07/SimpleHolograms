@@ -29,7 +29,7 @@ Holograms are shared server display entities, not per-player packets. Server-wid
 
 ## Build
 
-Use Rust 1.96 or later. Dependencies are fetched from crates.io and the published PumpkinPIE `v0.2.5` Git tag; no sibling checkout is required.
+Use Rust 1.96 or later. Dependencies are fetched from crates.io and the published PumpkinPIE `v0.2.5` Git tag.
 
 ```sh
 rustup target add wasm32-wasip2
