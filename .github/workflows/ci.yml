@@ -12,9 +12,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
-          targets: wasm32-wasip2
+          targets: wasm32-wasip3
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - run: cargo fetch --locked
@@ -22,9 +22,9 @@ jobs:
       - run: cargo fmt --check
       - run: cargo clippy --locked --offline --all-targets -- -D warnings
       - run: cargo test --locked --offline
-      - run: cargo build --locked --offline --release --target wasm32-wasip2
+      - run: cargo build --locked --offline --release --target wasm32-wasip3
       - uses: actions/upload-artifact@v4
         with:
           name: pumpkin_holograms
-          path: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          path: target/wasm32-wasip3/release/pumpkin_holograms.wasm
           if-no-files-found: error

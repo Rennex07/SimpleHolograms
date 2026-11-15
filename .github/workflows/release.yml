@@ -30,9 +30,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.tag }}
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
-          targets: wasm32-wasip2
+          targets: wasm32-wasip3
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - name: Validate release inputs
@@ -68,21 +68,21 @@ jobs:
       - run: cargo fmt --check
       - run: cargo clippy --locked --offline --all-targets -- -D warnings
       - run: cargo test --locked --offline
-      - run: cargo build --locked --offline --release --target wasm32-wasip2
+      - run: cargo build --locked --offline --release --target wasm32-wasip3
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag }}
-          files: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          files: target/wasm32-wasip3/release/pumpkin_holograms.wasm
           fail_on_unmatched_files: true
-          body: Initial release.
+          body: Rebuilt for wasm32-wasip3.
       - name: Publish to Pumpkin Market
         if: inputs.publish_market
         uses: filiphsps/pumpkin-plugins/actions/publish-to-pumpkin-market@publish-to-pumpkin-market-v0.0.4
         with:
           plugin-id: ${{ vars.MARKET_PLUGIN_ID }}
           version: ${{ steps.version.outputs.value }}
-          wasm-file: target/wasm32-wasip2/release/pumpkin_holograms.wasm
+          wasm-file: target/wasm32-wasip3/release/pumpkin_holograms.wasm
           api-token: ${{ secrets.MARKET_API_TOKEN }}
           track: stable
-          release-notes: Initial release.
+          release-notes: Rebuilt for wasm32-wasip3.

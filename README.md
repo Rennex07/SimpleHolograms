@@ -6,6 +6,8 @@ Simple persistent text holograms for Pumpkin. This is a port of [FancyHolograms]
 
 Built for Pumpkin **0.2.1+26.3-26.51**. Put `pumpkin_holograms.wasm` in the server's `plugins` directory and restart.
 
+This build requires a Pumpkin runtime with WASIp3 support as well as the matching plugin WIT.
+
 The plugin requires `fs.read.data` and `fs.write.data` permissions for its configuration and saved holograms. On a headless server, approve them in `pumpkin.toml`:
 
 ```toml
@@ -27,14 +29,14 @@ Holograms are shared server display entities, not per-player packets. Server-wid
 
 ## Build
 
-Use Rust 1.96 or later. Dependencies are fetched from crates.io and the published PumpkinPIE `v0.2.5` Git tag.
+Use Rust 1.100.0 with `wasm32-wasip3`. The toolchain is pinned in `rust-toolchain.toml`. Dependencies are fetched from crates.io and the published PumpkinPIE `v0.2.5` Git tag.
 
 ```sh
-rustup target add wasm32-wasip2
+rustup target add wasm32-wasip3
 cargo fetch --locked
 python tools/check_wit.py
 cargo fmt --check
 cargo clippy --locked --offline --all-targets -- -D warnings
 cargo test --locked --offline
-cargo build --locked --offline --release --target wasm32-wasip2
+cargo build --locked --offline --release --target wasm32-wasip3
 ```
